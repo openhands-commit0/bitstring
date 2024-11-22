@@ -47,3 +47,14 @@ def oct2bitstore(s: str) -> BitStore:
     return BitStore(ba)
 
 literal_bit_funcs: Dict[str, Callable[..., BitStore]] = {'0x': hex2bitstore, '0X': hex2bitstore, '0b': bin2bitstore, '0B': bin2bitstore, '0o': oct2bitstore, '0O': oct2bitstore}
+
+def bitstore_from_token(token: str) -> BitStore:
+    """Create a BitStore from a token string.
+    
+    The token can be a hex, binary or octal string.
+    """
+    token = tidy_input_string(token)
+    for prefix, func in literal_bit_funcs.items():
+        if token.startswith(prefix.lower()):
+            return func(token)
+    raise ValueError(f"Invalid token format: {token}. Must start with one of {list(literal_bit_funcs.keys())}")
