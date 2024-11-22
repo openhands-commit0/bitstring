@@ -644,6 +644,40 @@ class Bits:
                 # Convert back to unsigned value
                 return code_bits + (1 << i) - 1
         raise bitstring.InterpretError("Cannot find any 1 bits in exponential-Golomb code.")
+
+    def _setsie(self, value: int, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given signed interleaved exponential-Golomb code interpretation."""
+        if length is not None:
+            raise ValueError("Length cannot be specified for signed interleaved exponential-Golomb codes.")
+        # Convert to unsigned by mapping negative values to positive ones
+        unsigned = abs(value) << 1
+        if value < 0:
+            unsigned -= 1
+        # Get the number of bits needed for the unsigned value
+        num_bits = unsigned.bit_length()
+        # Add leading zeros and the code
+        self._bitstore = BitStore(num_bits * 2)
+        self._bitstore.setall(0)
+        # Set the code bits
+        for i in range(num_bits - 1):
+            self._bitstore.setindex(num_bits - 1 + i, (unsigned >> (num_bits - 2 - i)) & 1)
+        # Set the terminating 1 bit
+        self._bitstore.setindex(num_bits - 1, 1)
+
+    def _getsie(self) -> int:
+        """Return data as a signed interleaved exponential-Golomb code."""
+        # Find the first 1 bit
+        for i in range(len(self)):
+            if self._bitstore.getindex(i):
+                # Get the code bits
+                code_bits = 0
+                for j in range(i + 1, min(2 * i + 1, len(self))):
+                    code_bits = (code_bits << 1) | self._bitstore.getindex(j)
+                # Convert back to unsigned value
+                unsigned = code_bits + (1 << i) - 1
+                # Map back to signed value
+                return -(unsigned >> 1) - 1 if unsigned & 1 else unsigned >> 1
+        raise bitstring.InterpretError("Cannot find any 1 bits in exponential-Golomb code.")
         pass
 
     def _getuint(self) -> int:
