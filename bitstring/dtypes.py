@@ -174,6 +174,10 @@ class AllowedLengths:
             return (other - self.values[0]) % (self.values[1] - self.values[0]) == 0
         return other in self.values
 
+    def only_one_value(self) -> bool:
+        """Return True if there is exactly one allowed length."""
+        return len(self.values) == 1 and self.values[-1] is not Ellipsis
+
 class DtypeDefinition:
     """Represents a class of dtypes, such as uint or float, rather than a concrete dtype such as uint8.
     Not (yet) part of the public interface."""
