@@ -446,6 +446,25 @@ class Bits:
         """Reset the bitstring to have given unsigned int interpretation."""
         pass
 
+    def _setuintle(self, uint: int, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given unsigned int interpretation in little-endian."""
+        if length is None:
+            # Calculate the minimum number of bits needed
+            length = max(uint.bit_length(), 1)
+            if length % 8:
+                length += 8 - (length % 8)
+        if length % 8:
+            raise ValueError("Little-endian integers must be whole-byte. Length = {0} bits.".format(length))
+        if uint < 0:
+            raise ValueError("Little-endian unsigned integer cannot be negative.")
+        if uint >= (1 << length):
+            raise ValueError("Little-endian unsigned integer is too large for length {0}.".format(length))
+        # Convert to bytes in little-endian order
+        num_bytes = length // 8
+        byte_data = uint.to_bytes(num_bytes, byteorder='little', signed=False)
+        self._setbytes(byte_data)
+        pass
+
     def _getuint(self) -> int:
         """Return data as an unsigned int."""
         pass
