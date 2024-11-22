@@ -527,6 +527,17 @@ class Bits:
             self._setbytes(byte_data[:2])
         except (struct.error, OverflowError):
             raise ValueError("Float is too large for bfloat format.")
+
+    def _getbfloatbe(self) -> float:
+        """Return data as a bfloat in big-endian format."""
+        if len(self) != 16:
+            raise bitstring.InterpretError("bfloat requires 16 bits.")
+        # Convert to 32-bit float by appending two zero bytes
+        byte_data = self._getbytes() + b'\x00\x00'
+        try:
+            return struct.unpack('>f', byte_data)[0]
+        except struct.error:
+            raise bitstring.InterpretError("Cannot interpret as bfloat.")
         pass
 
     def _getuint(self) -> int:
