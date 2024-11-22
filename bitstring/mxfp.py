@@ -93,6 +93,7 @@ def decompress_luts() -> None:
     """Decompress the lookup tables for MXFP formats."""
     for fmt in [e2m1mxfp_fmt, e2m3mxfp_fmt, e3m2mxfp_fmt, e4m3mxfp_saturate_fmt, e5m2mxfp_saturate_fmt, e4m3mxfp_overflow_fmt, e5m2mxfp_overflow_fmt]:
         if fmt.lut_float16_to_mxfp is None:
-            fmt.lut_float16_to_mxfp = zlib.decompress(mxfp_luts_compressed[str(fmt)])
+            key = (fmt.exp_bits, fmt.mantissa_bits, fmt.bias, fmt.mxfp_overflow)
+            fmt.lut_float16_to_mxfp = zlib.decompress(mxfp_luts_compressed[key])
         if fmt.lut_int_to_float is None:
             fmt.lut_int_to_float = fmt.createLUT_for_int_to_float()
