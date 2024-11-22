@@ -94,6 +94,7 @@ def decompress_luts() -> None:
     for fmt in [e2m1mxfp_fmt, e2m3mxfp_fmt, e3m2mxfp_fmt, e4m3mxfp_saturate_fmt, e5m2mxfp_saturate_fmt, e4m3mxfp_overflow_fmt, e5m2mxfp_overflow_fmt]:
         if fmt.lut_float16_to_mxfp is None:
             key = (fmt.exp_bits, fmt.mantissa_bits, fmt.bias, fmt.mxfp_overflow)
-            fmt.lut_float16_to_mxfp = zlib.decompress(mxfp_luts_compressed[key])
+            compressed_data = mxfp_luts_compressed[key]
+            fmt.lut_float16_to_mxfp = zlib.decompress(compressed_data[0])
         if fmt.lut_int_to_float is None:
             fmt.lut_int_to_float = fmt.createLUT_for_int_to_float()
