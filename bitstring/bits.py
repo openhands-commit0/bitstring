@@ -571,6 +571,19 @@ class Bits:
     def _getbits(self) -> Bits:
         """Return data as a Bits object."""
         return self.copy()
+
+    def _setbool(self, value: bool, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given bool interpretation."""
+        if length is not None and length != 1:
+            raise ValueError("Boolean values must be 1 bit long.")
+        self._bitstore = BitStore(1)
+        self._bitstore.setall(1 if value else 0)
+
+    def _getbool(self) -> bool:
+        """Return data as a bool."""
+        if len(self) != 1:
+            raise bitstring.InterpretError("Cannot interpret as bool: length must be 1 bit.")
+        return bool(self._bitstore.getindex(0))
         pass
 
     def _getuint(self) -> int:
