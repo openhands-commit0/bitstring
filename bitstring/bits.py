@@ -561,6 +561,16 @@ class Bits:
             return struct.unpack('<f', byte_data)[0]
         except struct.error:
             raise bitstring.InterpretError("Cannot interpret as bfloat.")
+
+    def _setbits(self, bits: Bits, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given bits interpretation."""
+        if length is not None and len(bits) != length:
+            raise ValueError("Bits length {0} does not match required length {1}.".format(len(bits), length))
+        self._bitstore = bits._bitstore.copy()
+
+    def _getbits(self) -> Bits:
+        """Return data as a Bits object."""
+        return self.copy()
         pass
 
     def _getuint(self) -> int:
