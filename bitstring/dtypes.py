@@ -250,7 +250,7 @@ class Register:
         del cls.names[name]
 
     def __repr__(self) -> str:
-        s = [f'{'key':<12}:{'name':^12}{'signed':^8}{'set_fn_needs_length':^23}{'allowed_lengths':^16}{'multiplier':^12}{'return_type':<13}']
+        s = ["key:         name      signed  set_fn_needs_length   allowed_lengths multiplier  return_type"]
         s.append('-' * 85)
         for key in self.names:
             m = self.names[key]
