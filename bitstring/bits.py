@@ -737,6 +737,22 @@ class Bits:
         # Convert from bytes using the p3binary format
         byte_data = self._getbytes()
         return p3binary_fmt.lut_binary8_to_float[byte_data[0]]
+
+    def _setp4binary(self, value: float, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given p4binary float interpretation."""
+        if length is not None and length != 8:
+            raise ValueError("p4binary must be 8 bits.")
+        # Convert to bytes using the p4binary format
+        byte_data = p4binary_fmt.float_to_int8(value).to_bytes(1, byteorder='big', signed=False)
+        self._setbytes(byte_data)
+
+    def _getp4binary(self) -> float:
+        """Return data as a p4binary float."""
+        if len(self) != 8:
+            raise bitstring.InterpretError("p4binary requires 8 bits.")
+        # Convert from bytes using the p4binary format
+        byte_data = self._getbytes()
+        return p4binary_fmt.lut_binary8_to_float[byte_data[0]]
         pass
 
     def _getuint(self) -> int:
