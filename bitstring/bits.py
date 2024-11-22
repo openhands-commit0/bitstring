@@ -721,6 +721,22 @@ class Bits:
     def _getpad(self) -> None:
         """Return data as padding bits (always returns None)."""
         return None
+
+    def _setp3binary(self, value: float, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given p3binary float interpretation."""
+        if length is not None and length != 8:
+            raise ValueError("p3binary must be 8 bits.")
+        # Convert to bytes using the p3binary format
+        byte_data = p3binary_fmt.float_to_int8(value).to_bytes(1, byteorder='big', signed=False)
+        self._setbytes(byte_data)
+
+    def _getp3binary(self) -> float:
+        """Return data as a p3binary float."""
+        if len(self) != 8:
+            raise bitstring.InterpretError("p3binary requires 8 bits.")
+        # Convert from bytes using the p3binary format
+        byte_data = self._getbytes()
+        return p3binary_fmt.lut_binary8_to_float[byte_data[0]]
         pass
 
     def _getuint(self) -> int:
