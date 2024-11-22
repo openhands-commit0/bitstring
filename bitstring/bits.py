@@ -515,6 +515,18 @@ class Bits:
         except (struct.error, OverflowError):
             raise ValueError("Float is too large for length {0}.".format(length))
         self._setbytes(byte_data)
+
+    def _setbfloatbe(self, value: float, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given bfloat interpretation in big-endian."""
+        if length is not None and length != 16:
+            raise ValueError("bfloat must be 16 bits.")
+        # Convert to 32-bit float first
+        try:
+            byte_data = struct.pack('>f', value)
+            # Take only the first two bytes (16 bits) for bfloat
+            self._setbytes(byte_data[:2])
+        except (struct.error, OverflowError):
+            raise ValueError("Float is too large for bfloat format.")
         pass
 
     def _getuint(self) -> int:
