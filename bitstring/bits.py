@@ -479,6 +479,24 @@ class Bits:
         except OverflowError:
             raise ValueError("Little-endian signed integer is too large for length {0}.".format(length))
         self._setbytes(byte_data)
+
+    def _setfloatbe(self, value: float, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given float interpretation in big-endian."""
+        if length is None:
+            raise ValueError("A length must be specified with float initialisation.")
+        if length == 16:
+            fmt = '>e'
+        elif length == 32:
+            fmt = '>f'
+        elif length == 64:
+            fmt = '>d'
+        else:
+            raise ValueError("float length must be 16, 32 or 64 bits.")
+        try:
+            byte_data = struct.pack(fmt, value)
+        except (struct.error, OverflowError):
+            raise ValueError("Float is too large for length {0}.".format(length))
+        self._setbytes(byte_data)
         pass
 
     def _getuint(self) -> int:
