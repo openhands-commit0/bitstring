@@ -64,6 +64,8 @@ def decompress_luts() -> None:
     """Decompress the lookup tables for binary8 formats."""
     for fmt in [p4binary_fmt, p3binary_fmt]:
         if not hasattr(fmt, 'lut_float16_to_binary8'):
-            fmt.lut_float16_to_binary8 = zlib.decompress(binary8_luts_compressed[str(fmt)])
+            key = (fmt.exp_bits, fmt.bias)
+            compressed_data = binary8_luts_compressed[key]
+            fmt.lut_float16_to_binary8 = zlib.decompress(compressed_data[0])
         if not hasattr(fmt, 'lut_binary8_to_float'):
             fmt.lut_binary8_to_float = fmt.createLUT_for_binary8_to_float()
