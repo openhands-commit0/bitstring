@@ -463,6 +463,22 @@ class Bits:
         num_bytes = length // 8
         byte_data = uint.to_bytes(num_bytes, byteorder='little', signed=False)
         self._setbytes(byte_data)
+
+    def _setintle(self, value: int, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given signed int interpretation in little-endian."""
+        if length is None:
+            # Calculate the minimum number of bits needed
+            length = max(value.bit_length() + 1, 1)  # +1 for sign bit
+            if length % 8:
+                length += 8 - (length % 8)
+        if length % 8:
+            raise ValueError("Little-endian integers must be whole-byte. Length = {0} bits.".format(length))
+        num_bytes = length // 8
+        try:
+            byte_data = value.to_bytes(num_bytes, byteorder='little', signed=True)
+        except OverflowError:
+            raise ValueError("Little-endian signed integer is too large for length {0}.".format(length))
+        self._setbytes(byte_data)
         pass
 
     def _getuint(self) -> int:
