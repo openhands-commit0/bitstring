@@ -538,6 +538,29 @@ class Bits:
             return struct.unpack('>f', byte_data)[0]
         except struct.error:
             raise bitstring.InterpretError("Cannot interpret as bfloat.")
+
+    def _setbfloatle(self, value: float, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given bfloat interpretation in little-endian."""
+        if length is not None and length != 16:
+            raise ValueError("bfloat must be 16 bits.")
+        # Convert to 32-bit float first
+        try:
+            byte_data = struct.pack('<f', value)
+            # Take only the last two bytes (16 bits) for bfloat
+            self._setbytes(byte_data[2:])
+        except (struct.error, OverflowError):
+            raise ValueError("Float is too large for bfloat format.")
+
+    def _getbfloatle(self) -> float:
+        """Return data as a bfloat in little-endian format."""
+        if len(self) != 16:
+            raise bitstring.InterpretError("bfloat requires 16 bits.")
+        # Convert to 32-bit float by prepending two zero bytes
+        byte_data = b'\x00\x00' + self._getbytes()
+        try:
+            return struct.unpack('<f', byte_data)[0]
+        except struct.error:
+            raise bitstring.InterpretError("Cannot interpret as bfloat.")
         pass
 
     def _getuint(self) -> int:
