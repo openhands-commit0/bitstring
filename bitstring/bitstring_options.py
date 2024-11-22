@@ -7,12 +7,16 @@ class Options:
     _instance = None
 
     def __init__(self):
-        self.set_lsb0(False)
+        self._lsb0 = False
         self._bytealigned = False
         self.mxfp_overflow = 'saturate'
         self.no_color = False
         no_color = os.getenv('NO_COLOR')
         self.no_color = True if no_color else False
+
+    def set_lsb0(self, value: bool) -> None:
+        """Set whether bit numbering starts at 0 (True) or 1 (False) for the least significant bit."""
+        self._lsb0 = bool(value)
 
     def __repr__(self) -> str:
         attributes = {attr: getattr(self, attr) for attr in dir(self) if not attr.startswith('_') and (not callable(getattr(self, attr)))}
