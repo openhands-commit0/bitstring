@@ -708,6 +708,19 @@ class Bits:
                 # Convert back to unsigned value
                 return code_bits + (1 << i) - 1
         raise bitstring.InterpretError("Cannot find any 1 bits in exponential-Golomb code.")
+
+    def _setpad(self, value: None, length: Optional[int]=None) -> None:
+        """Reset the bitstring to have given padding bits interpretation."""
+        if length is None:
+            raise ValueError("Length must be specified for padding bits.")
+        if value is not None:
+            raise ValueError("Padding bits cannot have a value.")
+        self._bitstore = BitStore(length)
+        self._bitstore.setall(0)
+
+    def _getpad(self) -> None:
+        """Return data as padding bits (always returns None)."""
+        return None
         pass
 
     def _getuint(self) -> int:
